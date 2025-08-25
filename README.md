@@ -1,73 +1,97 @@
-# PGR
+# Portal GR – Notícias de Estância Velha, RS
 
-Sistema web estático com painel administrativo para publicação de notícias, desenvolvido com **HTML**, **CSS** e **JavaScript**.
+Portal web desenvolvido para publicação e consulta de notícias locais.  
+O projeto utiliza **HTML, CSS e JavaScript** no front-end e conta com **integração completa com Firebase** (Autenticação, Firestore e Hosting).
 
----
+## 🚀 Funcionalidades
 
-## Visão Geral
+- 📰 **Listagem de notícias** dinâmicas a partir do Firestore.  
+- 🔍 **Visualização individual** de cada notícia em página dedicada.  
+- 👨‍💻 **Painel administrativo protegido**:
+  - Login via Firebase Authentication.
+  - Criação, edição e exclusão de notícias (restrito a administradores com *custom claims*).  
+- 📱 **Design responsivo** adaptado para dispositivos móveis.  
+- 🔒 **Regras de segurança** configuradas no Firestore, permitindo apenas a leitura pública e escrita restrita a administradores.  
 
-O **PGR** é uma aplicação web simples, com página inicial, área de notícias e painel administrativo.  
-Seu funcionamento é baseado em páginas estáticas, com organização clara de estilos, scripts e imagens.
+## 🛠️ Tecnologias utilizadas
 
----
+- **Front-end**: HTML5, CSS3, JavaScript  
+- **Back-end/BaaS**: Firebase  
+  - Firebase Authentication  
+  - Cloud Firestore  
+  - Firebase Hosting  
+- **Deploy**: Vercel  
 
-## Funcionalidades Atuais
-
-- **`index.html`**: página principal de apresentação.
-- **`noticia.html`**: visualização de detalhes de notícia.
-- **`admin.html`**: painel administrativo para gerenciar conteúdos.
-- **`style.css`**: folha de estilo central.
-- **`scripts/`**: scripts de interação em JavaScript.
-- **`Imagens/`**: armazenamento de arquivos de imagem.
-
----
-
-## Tecnologias Utilizadas
-
-- **HTML**
-- **CSS**
-- **JavaScript**
-
----
-
-## Estrutura do Projeto
+## 📂 Estrutura do projeto
 
 ```
-PGR/
-├── index.html
-├── noticia.html
-├── admin.html
-├── style.css
-├── scripts/
-│   └── [arquivos JavaScript]
-└── Imagens/
-    └── [arquivos de imagem]
+PGR-2/
+│
+├── index.html         # Página inicial
+├── noticia.html       # Página de detalhe da notícia
+├── admin.html         # Painel administrativo (restrito a admins)
+│
+├── /scripts           # Scripts JS (integração Firebase e UI)
+│   └── ...
+│
+├── /styles            # Arquivos CSS
+│   └── ...
+│
+├── /Imagens           # Logos, ícones e imagens usadas no site
+│   └── ...
+│
+└── README.md
 ```
 
----
+## ⚙️ Como executar localmente
 
-## Como Executar Localmente
-
-1. Clone o repositório:
+1. **Clonar o repositório**
    ```bash
-   git clone https://github.com/PedroHenrique2222/PGR.git
+   git clone https://github.com/PedroHenrique2222/PGR-2.git
+   cd PGR-2
    ```
-2. Acesse a pasta do projeto:
-   ```bash
-   cd PGR
+
+2. **Instalar dependências (opcional)**  
+   O projeto não utiliza bundlers, mas recomenda-se servir os arquivos com um servidor local (ex.: Live Server no VSCode).
+
+3. **Configurar Firebase**  
+   - Criar um projeto no [Firebase Console](https://console.firebase.google.com).  
+   - Ativar **Authentication (Email/Senha)**.  
+   - Criar o banco no **Cloud Firestore**.  
+   - Definir as regras de segurança adequadas:  
+
+   ```js
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       // Notícias podem ser lidas por qualquer pessoa
+       match /news/{newsId} {
+         allow read: if true;
+
+         // Apenas administradores podem escrever
+         allow write: if request.auth.token.admin == true;
+       }
+     }
+   }
    ```
-3. Abra o arquivo `index.html` diretamente no navegador.
+
+   - Copiar as credenciais do Firebase (`firebaseConfig`) e inserir no arquivo `scripts/firebase.js`.
+
+4. **Rodar localmente**  
+   Abrir `index.html` no navegador ou servir via `Live Server`.
+
+## 🌐 Deploy
+
+- **Produção**: [Portal GR no Vercel](https://pgr-2.vercel.app)  
+- O site também pode ser publicado no **Firebase Hosting**.
+
+## 👥 Acesso administrativo
+
+- O painel `admin.html` só pode ser acessado após login.  
+- Permissões administrativas são concedidas via *custom claims* no Firebase.  
 
 ---
 
-## Deploy
+## 📄 Licença
 
-O projeto pode ser acessado pela versão publicada em:
-
-👉 [pgr-ivory.vercel.app](https://pgr-ivory.vercel.app)
-
----
-
-## Contato
-
-- **Repositório**: [github.com/PedroHenrique2222/PGR](https://github.com/PedroHenrique2222/PGR)
+Este projeto é de uso pessoal/proprietário. Nenhum direito de redistribuição é concedido sem autorização do autor.
