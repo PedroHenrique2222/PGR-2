@@ -27,7 +27,8 @@ body {
    ESTILOS DA PÁGINA INICIAL (index.html)
    ========================================================================== */
 .hero-bg {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Imagens/EV.jpeg');
+    /* CORREÇÃO: Ajustado o caminho da imagem para funcionar a partir da pasta /styles */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../Imagens/EV.jpeg');
     background-size: cover;
     background-position: center;
 }
@@ -140,7 +141,6 @@ body {
 }
 
 .news-content p {
-    /* CORREÇÃO: Diminuído o espaçamento entre parágrafos e a altura da linha */
     margin-bottom: 1rem;
     line-height: 1.8;
     font-size: 1.15rem;
