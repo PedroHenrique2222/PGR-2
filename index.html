@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal GR - Notícias de Estância Velha, RS</title>
+    <meta name="description" content="Acompanhe as ações e as últimas notícias de Estância Velha e região com Gabriel Rudá.">
+    <link rel="icon" type="image/png" href="Imagens/FV.png">
+    <link rel="preload" as="image" href="Imagens/EV.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="styles/style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#0D47A1', 'primary-dark': '#1565C0',
+                        'light-bg': '#F7FAFC', 'dark-bg': '#1A202C',
+                        'dark-card': '#2D3748'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light-bg text-gray-800 dark:bg-dark-bg dark:text-gray-200 transition-colors duration-300">
+
+    <header class="bg-white dark:bg-dark-card shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-2">
+                <div class="flex items-center gap-x-6">
+                    <div class="flex items-center">
+                        <img src="Imagens/FV.png" alt="Logo Portal GR" class="rounded-full mr-3 w-12 h-12 object-cover">
+                        <a href="#" class="text-xl font-bold text-gray-800 dark:text-white hover:text-primary dark:hover:text-blue-400">Portal GR</a>
+                    </div>
+                    <nav class="hidden md:flex items-center gap-x-2 text-sm font-semibold">
+                        <a href="#inicio" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200">Início</a>
+                        <a href="#sobre" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200">Sobre Mim</a>
+                        <a href="#noticias" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200">Notícias</a>
+                        <a href="#links" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200">Links Úteis</a>
+                        <a href="#contato" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200">Contato</a>
+                    </nav>
+                </div>
+                <div class="flex items-center">
+                    <button id="theme-toggle" title="Alternar tema"><i id="theme-icon" class="fas fa-moon fa-lg"></i></button>
+                    <button id="mobile-menu-button" class="md:hidden ml-4"><i class="fas fa-bars fa-lg"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden bg-white dark:bg-dark-card border-t border-gray-200 dark:border-gray-700">
+             <a href="#inicio" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Início</a>
+             <a href="#sobre" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Sobre Mim</a>
+             <a href="#noticias" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Notícias</a>
+             <a href="#links" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Links Úteis</a>
+             <a href="#contato" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Contato</a>
+        </div>
+    </header>
+
+    <main id="inicio">
+        <section class="hero-bg text-white py-24 md:py-40 fade-in-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Trabalhando por Estância Velha</h1>
+                <p class="text-lg md:text-xl max-w-4xl mx-auto text-gray-200">Acompanhe minhas ações e as últimas notícias da nossa cidade.</p>
+            </div>
+        </section>
+
+        <section id="noticias" class="py-16 fade-in-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white">Últimas Notícias</h2>
+                <div class="relative">
+                    <div class="swiper news-carousel">
+                        <div class="swiper-wrapper" id="news-wrapper"></div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                    <div class="swiper-button-prev -left-4 md:-left-8"></div>
+                    <div class="swiper-button-next -right-4 md:-right-8"></div>
+                </div>
+                 <p id="no-news-message" class="hidden text-center text-gray-500 dark:text-gray-400 mt-8">Nenhuma notícia encontrada. Volte em breve!</p>
+            </div>
+        </section>
+        
+        <section id="sobre" class="bg-white dark:bg-dark-card py-16 fade-in-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-16">
+                    <div class="md:w-2/5 text-center">
+                        <img src="Imagens/GR.JPG" alt="Foto de Gabriel Rudá" class="rounded-full shadow-2xl mx-auto w-64 h-64 object-cover" loading="lazy">
+                    </div>
+                    <div class="md:w-3/5">
+                        <h2 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white">Sobre Mim</h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">
+                            Gabriel Rudá, aos 17 anos, é membro e ex-presidente do Partido Liberal de Estância Velha, demonstrando comprometimento precoce com o desenvolvimento político e social da cidade. Sua experiência em liderança partidária e participação ativa em iniciativas comunitárias refletem sua dedicação ao bem-estar dos habitantes locais, alimentando o sonho de um dia exercer a função de prefeito para contribuir efetivamente com o crescimento e modernização de Estância Velha.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="links" class="py-16 bg-light-bg dark:bg-dark-bg fade-in-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-12">Links Úteis</h2>
+                <div class="flex flex-col md:flex-row justify-center gap-8">
+                    <a href="https://www.estanciavelha.rs.gov.br/" target="_blank" rel="noopener noreferrer" class="bg-white dark:bg-dark-card p-8 rounded-xl shadow-lg flex items-center space-x-6 hover:shadow-xl hover:-translate-y-1 transition-all w-full md:w-2/5 lg:w-1/3"><i class="fas fa-landmark fa-3x text-primary dark:text-blue-400"></i><div><h3 class="font-bold text-xl">Prefeitura Municipal</h3><p class="text-gray-600 dark:text-gray-300">Acesse o site oficial.</p></div></a>
+                    <a href="https://www.estanciavelha.rs.leg.br/" target="_blank" rel="noopener noreferrer" class="bg-white dark:bg-dark-card p-8 rounded-xl shadow-lg flex items-center space-x-6 hover:shadow-xl hover:-translate-y-1 transition-all w-full md:w-2/5 lg:w-1/3"><i class="fas fa-users fa-3x text-primary dark:text-blue-400"></i><div><h3 class="font-bold text-xl">Câmara de Vereadores</h3><p class="text-gray-600 dark:text-gray-300">Acompanhe o legislativo.</p></div></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contato" class="bg-dark-bg dark:bg-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-3xl font-bold mb-4">Entre em Contato</h3>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto">Sua opinião é importante. Envie suas dúvidas, críticas e sugestões.</p>
+            <!-- CORREÇÃO: Links de contato atualizados -->
+            <div class="flex justify-center space-x-6 mb-10">
+                 <a href="mailto:Gabriel.h3j@gmail.com" class="text-gray-300 hover:text-white" title="Email"><i class="fas fa-envelope fa-2x"></i></a>
+                 <a href="https://www.facebook.com/share/178TNbc6Nu/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white" title="Facebook"><i class="fab fa-facebook fa-2x"></i></a>
+                 <a href="https://www.instagram.com/gabriel__ruda?igsh=MWo5NTNwM3p0YnZj&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white" title="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
+                 <a href="https://wa.me/5551984723863" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white" title="WhatsApp"><i class="fab fa-whatsapp fa-2x"></i></a>
+            </div>
+            <p class="text-gray-400 text-sm">&copy; 2025 Portal GR. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="fixed bottom-5 right-5 w-12 h-12 bg-primary text-white rounded-full shadow-lg hidden items-center justify-center text-xl hover:bg-primary-dark transition-all">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlV94hvPy5NIi6zCoSihsaMmoprudmaWQ",
+            authDomain: "portal-noticias-ruda.firebaseapp.com",
+            projectId: "portal-noticias-ruda",
+            storageBucket: "portal-noticias-ruda.appspot.com",
+            messagingSenderId: "520724881912",
+            appId: "1:520724881912:web:a9f207b3235328cf34b60d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const newsWrapper = document.getElementById('news-wrapper');
+        const noNewsMessage = document.getElementById('no-news-message');
+        const newsCarousel = document.querySelector('.news-carousel');
+        let swiperInstance = null;
+
+        function stripHtml(html) {
+           const tmp = document.createElement("DIV");
+           tmp.innerHTML = html;
+           return tmp.textContent || tmp.innerText || "";
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Data indisponível';
+            return timestamp.toDate().toLocaleDateString('pt-BR', {
+                day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+
+        const initSwiper = (slidesCount) => {
+            if (swiperInstance) {
+                swiperInstance.destroy(true, true);
+            }
+            swiperInstance = new Swiper('.news-carousel', {
+                effect: 'coverflow', grabCursor: true, centeredSlides: true, slidesPerView: 'auto',
+                loop: slidesCount > 3,
+                autoplay: { delay: 5000, disableOnInteraction: true },
+                coverflowEffect: { rotate: 30, stretch: 0, depth: 100, modifier: 1, slideShadows: false },
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
+            });
+        };
+
+        const q = query(collection(db, "news"), orderBy("createdAt", "desc"), limit(10));
+        onSnapshot(q, (querySnapshot) => {
+            newsWrapper.innerHTML = ''; 
+            const hasNews = !querySnapshot.empty;
+            
+            if (hasNews) {
+                newsCarousel.classList.remove('hidden');
+                noNewsMessage.classList.add('hidden');
+
+                querySnapshot.forEach((doc) => {
+                    const news = doc.data();
+                    const plainContent = stripHtml(news.content);
+                    const formattedDate = formatDate(news.createdAt);
+                    const slide = document.createElement('div');
+                    slide.className = 'swiper-slide';
+                    const tagsHtml = (news.tags || []).map(tag => `<span class="text-xs font-semibold text-primary dark:text-blue-400">#${tag}</span>`).join(' ');
+
+                    slide.innerHTML = `
+                        <div class="news-card bg-white dark:bg-dark-card rounded-xl overflow-hidden flex flex-col h-full">
+                            <a href="noticia.html?id=${doc.id}" class="block h-52 news-card-image-wrapper">
+                                <img src="${news.imageUrl || 'https://placehold.co/600x400/cccccc/FFFFFF?text=Imagem'}" alt="${news.title}" class="w-full h-full object-cover news-card-image" loading="lazy">
+                            </a>
+                            <div class="p-6 flex flex-col flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="news-tag text-xs font-bold py-1 px-3 rounded-full self-start">${news.category.toUpperCase()}</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</span>
+                                </div>
+                                <h3 class="font-bold text-xl my-2 text-gray-800 dark:text-white flex-grow">
+                                    <a href="noticia.html?id=${doc.id}" class="hover:text-primary dark:hover:text-blue-400 transition-colors">${news.title}</a>
+                                </h3>
+                                <div class="flex flex-wrap gap-x-2 mt-2">${tagsHtml}</div>
+                                <p class="text-gray-600 dark:text-gray-300 text-base my-4">${plainContent.substring(0, 80)}...</p>
+                                <a href="noticia.html?id=${doc.id}" class="read-more-btn font-semibold text-primary dark:text-blue-400 hover:underline mt-auto inline-flex items-center">
+                                    <span>Leia Mais &rarr;</span>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    newsWrapper.appendChild(slide);
+                });
+
+                initSwiper(querySnapshot.docs.length);
+            } else {
+                newsCarousel.classList.add('hidden');
+                noNewsMessage.classList.remove('hidden');
+            }
+        });
+    </script>
+    
+    <script src="scripts/main.js"></script>
+</body>
+</html>

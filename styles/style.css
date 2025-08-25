@@ -1,0 +1,264 @@
+/* ==========================================================================
+   ESTILOS GLOBAIS E FONTES
+   ========================================================================== */
+body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* ==========================================================================
+   ESTILOS DO MENU MOBILE E DROPDOWN
+   ========================================================================== */
+#mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu {
+    display: none;
+}
+
+/* ==========================================================================
+   ESTILOS DA PÁGINA INICIAL (index.html)
+   ========================================================================== */
+.hero-bg {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Imagens/EV.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+.news-tag {
+    background-color: rgba(13, 71, 161, 0.1);
+    color: #0D47A1;
+}
+
+.dark .news-tag {
+    background-color: rgba(66, 153, 225, 0.2);
+    color: #63B3ED;
+}
+
+.swiper-slide {
+    height: auto;
+    display: flex;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.swiper-slide:not(.swiper-slide-active) {
+    opacity: 0.4;
+    transform: scale(0.9);
+}
+
+.news-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.dark .news-card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+}
+
+.swiper-slide:hover .news-card {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.news-card-image-wrapper {
+    overflow: hidden;
+}
+
+.news-card-image {
+    transition: transform 0.4s ease;
+}
+
+.news-card:hover .news-card-image {
+    transform: scale(1.05);
+}
+
+.news-carousel {
+    padding-bottom: 50px !important;
+}
+
+.swiper-button-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #0D47A1;
+}
+
+.dark .swiper-button-next,
+.dark .swiper-button-prev {
+    color: #63B3ED;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #0D47A1 !important;
+}
+
+.dark .swiper-pagination-bullet-active {
+    background-color: #63B3ED !important;
+}
+
+
+/* ==========================================================================
+   ESTILOS DA PÁGINA DE NOTÍCIA (noticia.html)
+   ========================================================================== */
+.news-content-wrapper {
+    max-width: 75ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.news-content h2,
+.news-content h3 {
+    font-weight: 800;
+    margin-bottom: 1rem;
+    margin-top: 3rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+}
+
+.dark .news-content h2,
+.dark .news-content h3 {
+    border-color: #2D3748;
+}
+
+.news-content h2 {
+    font-size: 1.75rem;
+}
+
+.news-content h3 {
+    font-size: 1.5rem;
+}
+
+.news-content p {
+    /* CORREÇÃO: Diminuído o espaçamento entre parágrafos e a altura da linha */
+    margin-bottom: 1rem;
+    line-height: 1.8;
+    font-size: 1.15rem;
+}
+
+.news-content a {
+    color: #0D47A1;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.news-content a:hover {
+    color: #1565C0;
+}
+
+.dark .news-content a {
+    color: #60a5fa;
+}
+
+.dark .news-content a:hover {
+    color: #90cdf4;
+}
+
+.news-content iframe {
+    display: block;
+    border: none;
+    margin: 2.5rem auto;
+    max-width: 100%;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+}
+
+.dark .news-content iframe {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+}
+
+.news-content iframe.is-vertical {
+    aspect-ratio: 267 / 476;
+    width: 267px;
+    max-width: 100%;
+    height: auto;
+}
+
+
+/* ==========================================================================
+   ESTILOS DO PAINEL ADMINISTRATIVO (admin.html)
+   ========================================================================== */
+.toast {
+    animation: slide-in 0.5s forwards, slide-out 0.5s forwards 3s;
+}
+
+@keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+#editor-container {
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.dark #editor-container { border-color: #4a5568; }
+.ql-toolbar.ql-snow { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; border: none; border-bottom: 1px solid #d1d5db; }
+.dark .ql-toolbar.ql-snow { background: #2d3748; border-bottom: 1px solid #4a5568; }
+
+.dark .ql-snow .ql-stroke { stroke: #e2e8f0; }
+.dark .ql-snow .ql-fill { fill: #e2e8f0; }
+.dark .ql-snow .ql-picker-label { color: #e2e8f0; }
+.dark .ql-snow.ql-toolbar button:hover .ql-stroke, .dark .ql-snow.ql-toolbar .ql-picker-label:hover { stroke: #ffffff; color: #ffffff; }
+.dark .ql-snow.ql-toolbar .ql-active .ql-stroke { stroke: #63b3ed; }
+.dark .ql-snow.ql-toolbar .ql-active .ql-picker-label { color: #63b3ed; }
+
+.ql-container.ql-snow { border: none; min-height: 250px; }
+.dark .ql-container.ql-snow { background: #4a5568; color: #e2e8f0; }
+.dark .ql-editor.ql-blank::before { color: rgba(226, 232, 240, 0.6); }
+.ql-snow.ql-toolbar button:hover, .ql-snow .ql-toolbar button:focus { background-color: #f0f4f8; }
+
+/* CORREÇÃO: Remove o fundo e a borda dos botões para um visual limpo */
+.dark .ql-snow.ql-toolbar button, .dark .ql-snow .ql-toolbar .ql-picker {
+    background-color: transparent;
+    border: none;
+    border-radius: 0.25rem;
+    margin: 1px 2px;
+    transition: background-color 0.2s ease;
+}
+.dark .ql-snow.ql-toolbar button:hover, .dark .ql-snow .ql-toolbar button:focus, .dark .ql-snow .ql-toolbar .ql-picker:hover {
+    background-color: #4a5568;
+}
+
+.dark .ql-snow .ql-picker-options { background-color: #2d3748; border-color: #4a5568; }
+.dark .ql-snow .ql-picker.ql-color .ql-picker-item { border-color: #4a5568; }
+.ql-snow .ql-editor img { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.ql-snow .ql-editor iframe { width: 100%; max-width: 700px; aspect-ratio: 16 / 9; height: auto; display: block; margin: 1.5rem auto; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.ql-snow .ql-editor iframe[src*="/shorts/"], .ql-snow .ql-editor iframe[src*="/reel/"] { aspect-ratio: 9 / 16; width: 300px; height: auto; }
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto-slab"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto-slab"]::before { font-family: "Roboto Slab", serif; content: "Roboto Slab"; }
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="lora"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lora"]::before { font-family: "Lora", serif; content: "Lora"; }
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="montserrat"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="montserrat"]::before { font-family: "Montserrat", sans-serif; content: "Montserrat"; }
+
+.ql-editor .ql-font-roboto-slab { font-family: "Roboto Slab", serif; }
+.ql-editor .ql-font-lora { font-family: "Lora", serif; }
+.ql-editor .ql-font-montserrat { font-family: "Montserrat", sans-serif; }
+
+
+/* ==========================================================================
+   NOVOS ESTILOS PARA FUNCIONALIDADES
+   ========================================================================== */
+.fade-in-section { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.fade-in-section.is-visible { opacity: 1; transform: translateY(0); }
+.dashboard-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+.dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.dark .dashboard-card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25); }
+#back-to-top { z-index: 100; transition: opacity 0.3s, visibility 0.3s; }
+#back-to-top.hidden { opacity: 0; visibility: hidden; }

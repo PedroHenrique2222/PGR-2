@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notícia - Portal GR</title>
+    <meta name="description" content="Acompanhe as últimas notícias de Estância Velha e região.">
+    <link rel="icon" type="image/png" href="Imagens/FV.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles/style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#0D47A1', 'primary-dark': '#1565C0',
+                        'light-bg': '#F7FAFC', 'dark-bg': '#1A202C',
+                        'dark-card': '#2D3748'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light-bg text-gray-800 dark:bg-dark-bg dark:text-gray-200 transition-colors duration-300">
+
+    <div id="progress-bar" class="fixed top-0 left-0 z-50 h-1 bg-primary transition-all duration-100 ease-linear" style="width: 0%;"></div>
+
+    <header class="bg-white dark:bg-dark-card shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div>
+                    <a href="index.html" class="text-2xl font-bold text-gray-800 dark:text-white hover:text-primary dark:hover:text-blue-400">Portal GR</a>
+                </div>
+                <nav class="hidden md:flex items-center gap-x-4 text-sm font-semibold">
+                    <a href="index.html#noticias" class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200">Últimas Notícias</a>
+                    <div class="relative dropdown">
+                        <button class="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 rounded-md transition-colors duration-200 flex items-center">
+                            Editorias <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="categories-dropdown" class="dropdown-menu absolute bg-white dark:bg-dark-card shadow-lg rounded-md mt-2 py-2 w-48 z-10"></div>
+                    </div>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button id="theme-toggle" title="Alternar tema"><i id="theme-icon" class="fas fa-moon fa-lg"></i></button>
+                    <button id="mobile-menu-button" class="md:hidden"><i class="fas fa-bars fa-lg"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden bg-white dark:bg-dark-card border-t border-gray-200 dark:border-gray-700"></div>
+    </header>
+
+    <main id="news-article-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 hidden">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <a href="index.html" class="hover:underline">Início</a> &gt; 
+            <a href="index.html#noticias" class="hover:underline">Notícias</a> &gt; 
+            <span id="breadcrumb-category" class="font-semibold"></span>
+        </div>
+        <h1 id="news-title" class="text-4xl md:text-5xl font-extrabold text-gray-800 dark:text-white mb-3 leading-tight"></h1>
+        <p id="news-subtitle" class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-5"></p>
+        <div class="text-gray-500 dark:text-gray-400 mb-8 text-sm"><span id="news-date"></span></div>
+        <figure class="mb-10">
+            <img id="news-image" src="" alt="" class="w-full rounded-lg shadow-lg bg-gray-200 dark:bg-dark-card" loading="lazy">
+            <figcaption id="image-credit" class="text-right text-xs text-gray-500 dark:text-gray-400 mt-2 italic"></figcaption>
+        </figure>
+        <div class="news-content-wrapper">
+            <article id="news-content" class="news-content"></article>
+            <div id="tags-container" class="mt-8 flex flex-wrap gap-2"></div>
+        </div>
+        
+        <div class="mt-12 border-t dark:border-gray-700 pt-6 text-center">
+            <h3 class="font-bold text-lg mb-4">Compartilhe:</h3>
+            <div id="share-buttons" class="flex items-center justify-center gap-x-4 md:gap-x-6 flex-wrap"></div>
+        </div>
+
+        <div id="related-news-section" class="mt-16 border-t dark:border-gray-700 pt-8">
+            <h3 class="font-bold text-2xl mb-6">Veja Também</h3>
+            <div id="related-news" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        </div>
+    </main>
+    
+    <div id="loading-indicator" class="flex justify-center items-center py-20"><i class="fas fa-spinner fa-spin fa-3x text-primary"></i></div>
+    <div id="error-message" class="hidden text-center py-20">
+        <h2 class="text-2xl font-bold mb-4">Notícia não encontrada</h2>
+        <p class="text-gray-600 dark:text-gray-400">O link que você seguiu pode estar quebrado ou a notícia pode ter sido removida.</p>
+        <a href="index.html" class="mt-6 inline-block bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-dark">Voltar para a página inicial</a>
+    </div>
+
+    <footer class="bg-dark-bg dark:bg-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-3xl font-bold mb-4">Entre em Contato</h3>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto">Sua opinião é importante. Envie suas dúvidas, críticas e sugestões.</p>
+            <!-- CORREÇÃO: Links de contato atualizados -->
+            <div class="flex justify-center space-x-6 mb-10">
+                 <a href="mailto:Gabriel.h3j@gmail.com" class="text-gray-300 hover:text-white" title="Email"><i class="fas fa-envelope fa-2x"></i></a>
+                 <a href="https://www.facebook.com/share/178TNbc6Nu/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white" title="Facebook"><i class="fab fa-facebook fa-2x"></i></a>
+                 <a href="https://www.instagram.com/gabriel__ruda?igsh=MWo5NTNwM3p0YnZj&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white" title="Instagram"><i class="fab fa-instagram fa-2x"></i></a>
+                 <a href="https://wa.me/5551984723863" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-white" title="WhatsApp"><i class="fab fa-whatsapp fa-2x"></i></a>
+            </div>
+            <p class="text-gray-400 text-sm">&copy; 2025 Portal GR. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="fixed bottom-5 right-5 w-12 h-12 bg-primary text-white rounded-full shadow-lg hidden items-center justify-center text-xl hover:bg-primary-dark transition-all">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, query, where, limit, orderBy, documentId, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlV94hvPy5NIi6zCoSihsaMmoprudmaWQ",
+            authDomain: "portal-noticias-ruda.firebaseapp.com",
+            projectId: "portal-noticias-ruda",
+            storageBucket: "portal-noticias-ruda.appspot.com",
+            messagingSenderId: "520724881912",
+            appId: "1:520724881912:web:a9f207b3235328cf34b60d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const errorMessage = document.getElementById('error-message');
+        const articleContainer = document.getElementById('news-article-container');
+
+        function renderNewsPage(newsData) {
+            document.title = `${newsData.title} - Portal GR`;
+            document.querySelector('meta[name="description"]').setAttribute("content", newsData.subtitle || 'Acompanhe as últimas notícias de Estância Velha e região.');
+            document.getElementById('breadcrumb-category').textContent = newsData.category;
+            document.getElementById('news-title').textContent = newsData.title;
+            document.getElementById('news-subtitle').textContent = newsData.subtitle || '';
+            document.getElementById('news-date').textContent = newsData.createdAt ? new Date(newsData.createdAt).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Data de pré-visualização';
+            document.getElementById('news-image').src = newsData.imageUrl || 'https://placehold.co/1200x600/cccccc/FFFFFF?text=Imagem+Indispon%C3%ADvel';
+            document.getElementById('news-image').alt = newsData.title;
+            document.getElementById('image-credit').textContent = newsData.imageCredit ? `Foto: ${newsData.imageCredit}` : '';
+            document.getElementById('news-content').innerHTML = newsData.content;
+            
+            const tagsContainer = document.getElementById('tags-container');
+            tagsContainer.innerHTML = '';
+            if (newsData.tags && newsData.tags.length > 0) {
+                newsData.tags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'bg-gray-200 dark:bg-gray-700 text-sm font-semibold px-3 py-1 rounded-full';
+                    tagEl.textContent = `#${tag}`;
+                    tagsContainer.appendChild(tagEl);
+                });
+            }
+        }
+
+        async function loadNewsArticle() {
+            const params = new URLSearchParams(window.location.search);
+            const newsId = params.get('id');
+            const isPreview = params.get('preview') === 'true';
+
+            if (isPreview) {
+                const previewData = JSON.parse(sessionStorage.getItem('newsPreview'));
+                if (previewData) {
+                    renderNewsPage(previewData);
+                    document.getElementById('related-news-section').style.display = 'none';
+                    articleContainer.classList.remove('hidden');
+                    loadingIndicator.style.display = 'none';
+                } else {
+                    errorMessage.classList.remove('hidden');
+                    loadingIndicator.style.display = 'none';
+                }
+                return;
+            }
+
+            if (!newsId) { 
+                errorMessage.classList.remove('hidden');
+                loadingIndicator.style.display = 'none';
+                return; 
+            }
+            
+            try {
+                const docRef = doc(db, "news", newsId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const newsData = { ...docSnap.data(), createdAt: docSnap.data().createdAt.toDate() };
+                    renderNewsPage(newsData);
+                    setupShareButtons(window.location.href, newsData.title);
+                    loadRelatedNews(newsData.category, newsId);
+                    articleContainer.classList.remove('hidden');
+                } else {
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Erro ao carregar notícia:", error);
+                errorMessage.classList.remove('hidden');
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+        
+        async function loadRelatedNews(currentCategory, currentId) {
+            const relatedNewsContainer = document.getElementById('related-news');
+            relatedNewsContainer.innerHTML = ''; 
+            const q = query(collection(db, "news"), where("category", "==", currentCategory), where(documentId(), "!=", currentId), limit(3));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                document.getElementById('related-news-section').style.display = 'none';
+                return;
+            }
+            querySnapshot.forEach((doc) => {
+                const news = doc.data();
+                const card = `
+                    <a href="noticia.html?id=${doc.id}" class="group block bg-white dark:bg-dark-card rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                        <div class="overflow-hidden h-48">
+                            <img src="${news.imageUrl || 'https://placehold.co/600x400/cccccc/FFFFFF?text=Imagem'}" alt="${news.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-lg group-hover:text-primary dark:hover:text-blue-400 transition-colors">${news.title}</h4>
+                        </div>
+                    </a>`;
+                relatedNewsContainer.innerHTML += card;
+            });
+        }
+
+        function setupShareButtons(url, title) {
+            const encodedUrl = encodeURIComponent(url);
+            const encodedTitle = encodeURIComponent(title);
+            const shareText = encodeURIComponent(`Confira esta notícia: ${title}`);
+            document.getElementById('share-buttons').innerHTML = `
+                <a href="https://api.whatsapp.com/send?text=${shareText}%20${encodedUrl}" target="_blank" title="Compartilhar no WhatsApp" class="text-4xl text-green-500 hover:opacity-80 transition-opacity"><i class="fab fa-whatsapp-square"></i></a>
+                <a href="https://t.me/share/url?url=${encodedUrl}&text=${shareText}" target="_blank" title="Compartilhar no Telegram" class="text-4xl text-blue-400 hover:opacity-80 transition-opacity"><i class="fab fa-telegram"></i></a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" title="Compartilhar no Facebook" class="text-4xl text-blue-600 hover:opacity-80 transition-opacity"><i class="fab fa-facebook-square"></i></a>
+                <a href="https://twitter.com/intent/tweet?url=${encodedUrl}&text=${shareText}" target="_blank" title="Compartilhar no X" class="text-gray-800 dark:text-gray-200 hover:opacity-80 transition-opacity"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${shareText}" target="_blank" title="Compartilhar no LinkedIn" class="text-4xl text-blue-700 hover:opacity-80 transition-opacity"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:?subject=${encodedTitle}&body=${shareText}%20${encodedUrl}" target="_blank" title="Enviar por E-mail" class="text-4xl text-red-500 hover:opacity-80 transition-opacity"><i class="fas fa-envelope-square"></i></a>
+            `;
+        }
+        
+        async function loadCategories() {
+            const categoriesCollection = collection(db, "categories");
+            const q = query(categoriesCollection, orderBy("name"));
+            const snapshot = await getDocs(q);
+            
+            const dropdown = document.getElementById('categories-dropdown');
+            const mobileMenu = document.getElementById('mobile-menu');
+            dropdown.innerHTML = '';
+            mobileMenu.innerHTML = `
+                <a href="index.html" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Início</a>
+                <a href="index.html#noticias" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">Últimas Notícias</a>
+                <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                <p class="px-6 py-2 text-sm font-semibold text-gray-500 dark:text-gray-400">Editorias</p>
+            `;
+            snapshot.forEach(doc => {
+                const category = doc.data();
+                const link = `<a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">${category.name}</a>`;
+                const mobileLink = `<a href="#" class="mobile-menu-link block py-3 px-6 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">${category.name}</a>`;
+                dropdown.innerHTML += link;
+                mobileMenu.innerHTML += mobileLink;
+            });
+        }
+
+        const progressBar = document.getElementById('progress-bar');
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = `${scrollPercent}%`;
+        });
+
+        loadNewsArticle();
+        loadCategories();
+    </script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
