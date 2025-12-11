@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Portal GR</title>
     <link rel="icon" type="image/png" href="Imagens/FV.png">
+    
+    <!-- Bibliotecas CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.6/dist/purify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lora&family=Montserrat&family=Roboto+Slab&display=swap" rel="stylesheet">
-    <!-- CORREÇÃO: Caminho do CSS atualizado -->
     <link rel="stylesheet" href="styles/style.css">
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -29,9 +28,63 @@
             }
         }
     </script>
+    <style>
+        /* Estilos do Editor e Mídia */
+        .image-preview-container {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #cbd5e0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .image-preview-container:hover { border-color: #0D47A1; background-color: #E3F2FD; }
+        .dark .image-preview-container { background-color: #2d3748; border-color: #4a5568; }
+        .dark .image-preview-container:hover { background-color: #2C5282; border-color: #63B3ED; }
+        
+        #image-preview { width: 100%; height: 100%; object-fit: cover; display: block; }
+        #image-preview.hidden { display: none; }
+
+        /* Modal de Crop e Mídia */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 60;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .crop-container {
+            max-width: 90%; max-height: 80vh; background: #fff;
+            overflow: hidden; border-radius: 8px;
+        }
+        .crop-container img { max-width: 100%; max-height: 70vh; display: block; }
+
+        /* Editor Fullscreen */
+        #editor-wrapper.fullscreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 100; background: white; padding: 20px;
+            display: flex; flex-direction: column;
+        }
+        .dark #editor-wrapper.fullscreen { background: #1A202C; }
+        #editor-wrapper.fullscreen #editor { flex-grow: 1; height: auto; }
+
+        /* Loading Overlay */
+        .processing-overlay {
+            position: absolute; inset: 0; background: rgba(255,255,255,0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
+        }
+        .dark .processing-overlay { background: rgba(0,0,0,0.9); }
+    </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
 
+    <!-- Seção de Login -->
     <div id="login-section" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white dark:bg-dark-card p-8 rounded-lg shadow-md w-full max-w-md">
             <h2 class="text-2xl font-bold text-center mb-6">Acesso Restrito</h2>
@@ -53,6 +106,7 @@
         </div>
     </div>
 
+    <!-- Painel Administrativo -->
     <div id="admin-panel" class="hidden">
         <header class="bg-white dark:bg-dark-card shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -67,94 +121,130 @@
         </header>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Dashboard Stats -->
             <section id="dashboard-section" class="mb-8">
-                <h2 class="text-3xl font-bold mb-4">Dashboard</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="dashboard-card bg-white dark:bg-dark-card p-6 rounded-lg shadow-md">
                         <h3 class="font-bold mb-2 text-gray-500 dark:text-gray-400 text-sm">Visão Geral</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-4">
-                                <i class="fas fa-newspaper fa-2x text-primary dark:text-blue-400"></i>
-                                <div>
-                                    <p class="text-gray-500 dark:text-gray-400 text-sm">Notícias Publicadas</p>
-                                    <p id="stats-total-news" class="text-2xl font-bold">0</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <i class="fas fa-edit fa-2x text-yellow-500"></i>
-                                <div>
-                                    <p class="text-gray-500 dark:text-gray-400 text-sm">Rascunhos</p>
-                                    <p id="stats-total-drafts" class="text-2xl font-bold">0</p>
-                                </div>
+                        <div class="flex items-center gap-4 mt-2">
+                            <i class="fas fa-newspaper fa-2x text-primary dark:text-blue-400"></i>
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">Notícias Publicadas</p>
+                                <p id="stats-total-news" class="text-2xl font-bold">0</p>
                             </div>
                         </div>
                     </div>
                     <div class="dashboard-card bg-white dark:bg-dark-card p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
                          <h3 class="font-bold mb-2 text-gray-500 dark:text-gray-400 text-sm">Notícias por Categoria</h3>
-                         <canvas id="categories-chart"></canvas>
+                         <!-- Container corrigido para o gráfico -->
+                         <div class="relative h-64 w-full">
+                            <canvas id="categories-chart"></canvas>
+                         </div>
                     </div>
                 </div>
             </section>
 
             <div class="grid grid-cols-1 gap-8">
+                <!-- Formulário de Notícia -->
                 <div id="form-container" class="hidden">
                     <div class="bg-white dark:bg-dark-card p-6 rounded-lg shadow-md">
-                        <h2 id="form-title" class="text-2xl font-bold mb-4">Adicionar Nova Notícia</h2>
-                        <form id="news-form">
+                        <div class="flex justify-between items-center mb-4 border-b dark:border-gray-700 pb-4">
+                            <h2 id="form-title" class="text-2xl font-bold">Adicionar Nova Notícia</h2>
+                            <button onclick="hideForm()" class="text-gray-500 hover:text-red-500"><i class="fas fa-times fa-lg"></i></button>
+                        </div>
+                        
+                        <form id="news-form" onsubmit="return false;">
                             <input type="hidden" id="news-id">
-                            <div class="space-y-6">
-                                <div>
-                                    <label for="title" class="block text-gray-700 dark:text-gray-300 mb-2">Título</label>
-                                    <input type="text" id="title" class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" required>
-                                </div>
-                                <div>
-                                    <label for="subtitle" class="block text-gray-700 dark:text-gray-300 mb-2">Subtítulo (Meta Descrição para SEO)</label>
-                                    <input type="text" id="subtitle" class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" maxlength="160">
-                                </div>
-                                <div class="grid md:grid-cols-2 gap-6">
+                            <input type="hidden" id="base64-image">
+                            
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <!-- Coluna Esquerda: Dados -->
+                                <div class="md:col-span-2 space-y-5">
                                     <div>
-                                        <label for="category" class="block text-gray-700 dark:text-gray-300 mb-2">Categoria</label>
-                                        <input type="text" id="category" class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" required placeholder="Ex: Infraestrutura">
+                                        <label class="block text-gray-700 dark:text-gray-300 mb-1 font-semibold">Título</label>
+                                        <input type="text" id="title" class="w-full px-3 py-2 border dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none" required oninput="updateCharCount(this, 'title-count')">
+                                        <div class="text-right text-xs text-gray-500"><span id="title-count">0</span> caracteres</div>
                                     </div>
                                     <div>
-                                        <label for="tags" class="block text-gray-700 dark:text-gray-300 mb-2">Tags (separadas por vírgula)</label>
-                                        <input type="text" id="tags" class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" placeholder="Ex: saúde, obras, educação">
+                                        <label class="block text-gray-700 dark:text-gray-300 mb-1 font-semibold">Subtítulo (Resumo)</label>
+                                        <textarea id="subtitle" rows="2" class="w-full px-3 py-2 border dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none" maxlength="160" oninput="updateCharCount(this, 'subtitle-count', 160)"></textarea>
+                                        <div class="text-right text-xs text-gray-500"><span id="subtitle-count">0</span>/160</div>
                                     </div>
                                 </div>
+                                
+                                <!-- Coluna Direita: Capa -->
                                 <div>
-                                    <label for="imageUrl" class="block text-gray-700 dark:text-gray-300 mb-2">URL da Imagem Principal</label>
-                                    <input type="url" id="imageUrl" class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" required placeholder="https://exemplo.com/imagem.jpg">
-                                    <img id="image-preview" src="" alt="Pré-visualização" class="mt-4 rounded-lg hidden max-h-60 w-auto object-cover">
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-2 font-bold">Imagem de Capa</label>
+                                    <div class="image-preview-container mb-2" id="drop-area">
+                                        <img id="image-preview" src="" alt="Pré-visualização" class="hidden">
+                                        <div id="placeholder-text" class="text-gray-400 text-center p-4">
+                                            <i class="fas fa-camera fa-2x mb-2 text-primary"></i>
+                                            <p class="text-sm">Clique para adicionar</p>
+                                        </div>
+                                        <div id="processing-overlay" class="processing-overlay hidden">
+                                            <i class="fas fa-circle-notch fa-spin fa-2x text-primary"></i>
+                                            <span class="text-xs font-bold mt-2">Otimizando...</span>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="imageInput" accept="image/*" class="hidden" />
+                                    
+                                    <div class="flex gap-2 text-xs">
+                                        <button type="button" onclick="document.getElementById('imageInput').click()" class="flex-1 bg-gray-200 dark:bg-gray-700 py-1 rounded hover:bg-gray-300">Upload</button>
+                                        <button type="button" onclick="promptUrlImage()" class="flex-1 bg-gray-200 dark:bg-gray-700 py-1 rounded hover:bg-gray-300">URL</button>
+                                        <button type="button" id="re-crop-btn" onclick="reCropImage()" class="hidden flex-1 bg-blue-100 text-blue-700 py-1 rounded hover:bg-blue-200">Editar</button>
+                                    </div>
+                                    <input type="hidden" id="imageSource" value="upload">
+                                    <input type="text" id="imageCredit" placeholder="Créditos da foto" class="w-full mt-2 px-2 py-1 text-sm border dark:border-gray-600 rounded bg-transparent">
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
+                                    <input type="text" id="category" class="w-full px-3 py-2 border dark:border-gray-600 rounded bg-white dark:bg-gray-700" required placeholder="Ex: Política">
                                 </div>
                                 <div>
-                                    <label for="imageCredit" class="block text-gray-700 dark:text-gray-300 mb-2">Crédito da Imagem (Opcional)</label>
-                                    <input type="text" id="imageCredit" class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" placeholder="Ex: Nome do Fotógrafo/Agência">
+                                    <label class="block text-gray-700 dark:text-gray-300 mb-1">Tags</label>
+                                    <input type="text" id="tags" class="w-full px-3 py-2 border dark:border-gray-600 rounded bg-white dark:bg-gray-700" placeholder="Ex: saúde, obras">
                                 </div>
-                                <div>
-                                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Conteúdo</label>
-                                    <div id="editor-container"><div id="editor"></div></div>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                        <strong>Para adicionar vídeos:</strong> Use o botão (🎬). Para YouTube, basta colar o link normal do vídeo. Para Facebook/Instagram, clique em "Incorporar", copie o link de `src="..."` e cole aqui.
-                                    </p>
+                            </div>
+
+                            <!-- EDITOR -->
+                            <div class="mt-8" id="editor-wrapper">
+                                <div class="flex justify-between items-end mb-2">
+                                    <label class="block text-gray-700 dark:text-gray-300 font-bold text-lg">Conteúdo da Notícia</label>
+                                    <div class="flex gap-2">
+                                        <button type="button" onclick="insertMediaModal()" class="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded hover:bg-blue-100 border border-blue-200 transition">
+                                            <i class="fas fa-photo-video mr-1"></i> Adicionar Mídia
+                                        </button>
+                                        <button type="button" onclick="toggleFullscreen()" class="text-sm text-gray-500 hover:text-primary" title="Tela Cheia">
+                                            <i class="fas fa-expand fa-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex gap-4 items-center flex-wrap">
-                                    <button type="button" id="save-button" class="bg-primary text-white py-2 px-6 rounded-lg hover:bg-primary-dark flex items-center justify-center">
-                                        Publicar
-                                    </button>
-                                    <button type="button" id="draft-button" class="bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-600">Salvar Rascunho</button>
-                                    <button type="button" id="preview-button" class="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700">Pré-visualizar</button>
-                                    <button type="button" id="cancel-button" class="bg-gray-400 text-white py-2 px-6 rounded-lg hover:bg-gray-500 ml-auto">Cancelar</button>
+                                <div id="editor-container" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                                    <div id="editor" style="min-height: 400px;"></div>
                                 </div>
+                                <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> Imagens coladas são comprimidas automaticamente para evitar erros de limite (1MB).</p>
+                            </div>
+
+                            <div class="flex gap-4 items-center flex-wrap pt-6 mt-6 border-t dark:border-gray-700">
+                                <button type="button" id="save-button" class="bg-primary text-white py-3 px-8 rounded-lg hover:bg-primary-dark flex items-center justify-center font-bold shadow-md transform transition hover:-translate-y-1">
+                                    <i class="fas fa-paper-plane mr-2"></i> Publicar
+                                </button>
+                                <button type="button" id="draft-button" class="bg-yellow-500 text-white py-3 px-6 rounded-lg hover:bg-yellow-600 font-semibold shadow-sm">Rascunho</button>
+                                <button type="button" id="cancel-button" class="bg-gray-400 text-white py-3 px-6 rounded-lg hover:bg-gray-500 ml-auto shadow-sm">Cancelar</button>
                             </div>
                         </form>
                     </div>
                 </div>
                 
+                <!-- Lista de Notícias -->
                 <div class="bg-white dark:bg-dark-card p-6 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold">Notícias</h2>
-                        <button id="add-news-button" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 flex items-center gap-2">
-                            <i class="fas fa-plus"></i> Adicionar Nova
+                        <h2 class="text-2xl font-bold">Notícias Recentes</h2>
+                        <button id="add-news-button" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 flex items-center gap-2 shadow-sm transition hover:scale-105">
+                            <i class="fas fa-plus"></i> Nova Notícia
                         </button>
                     </div>
                     <div id="news-list" class="space-y-4"></div>
@@ -163,20 +253,89 @@
         </main>
     </div>
 
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-dark-card rounded-lg shadow-xl w-full max-w-md p-6">
-            <h3 class="text-xl font-bold mb-4">Confirmar Exclusão</h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-6">Tem certeza que deseja apagar esta notícia? Esta ação não pode ser desfeita.</p>
-            <div class="flex justify-end gap-4">
-                <button id="cancel-delete-btn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancelar</button>
-                <button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Apagar</button>
+    <!-- Modal de Crop (Capa) -->
+    <div id="crop-modal" class="modal-overlay hidden">
+        <div class="crop-container relative w-full max-w-4xl bg-white flex flex-col">
+            <h3 class="text-lg font-bold p-3 bg-white border-b flex justify-between items-center text-gray-800">
+                Ajustar Capa
+                <button onclick="closeCropModal()" class="text-gray-500 hover:text-red-500"><i class="fas fa-times"></i></button>
+            </h3>
+            <div class="bg-gray-900 flex-grow flex justify-center items-center overflow-hidden" style="height: 60vh;">
+                <img id="image-to-crop" src="" alt="Para recortar">
+            </div>
+            <div class="p-3 bg-white border-t flex justify-end gap-3">
+                <button onclick="closeCropModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                <button onclick="confirmCrop()" class="px-6 py-2 bg-primary text-white rounded hover:bg-primary-dark font-bold">Confirmar</button>
             </div>
         </div>
     </div>
 
+    <!-- Modal de Inserção de Mídia (Editor) -->
+    <div id="media-modal" class="modal-overlay hidden">
+        <div class="bg-white dark:bg-dark-card w-full max-w-lg rounded-lg shadow-2xl p-6">
+            <h3 class="text-xl font-bold mb-4 border-b pb-2 dark:border-gray-700">Adicionar Mídia ao Texto</h3>
+            
+            <div class="flex gap-4 mb-4 border-b dark:border-gray-700">
+                <button onclick="switchMediaTab('image')" id="tab-image" class="pb-2 border-b-2 border-primary text-primary font-bold">Imagem</button>
+                <button onclick="switchMediaTab('video')" id="tab-video" class="pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700">Vídeo</button>
+            </div>
+
+            <!-- Tab Imagem -->
+            <div id="content-image">
+                <div class="space-y-4">
+                    <button onclick="document.getElementById('editor-image-input').click()" class="w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
+                        <p class="font-semibold">Clique para enviar imagem</p>
+                        <p class="text-xs text-gray-500">Será comprimida automaticamente</p>
+                    </button>
+                    <input type="file" id="editor-image-input" accept="image/*" class="hidden" onchange="handleEditorImageUpload(this)">
+                    
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t dark:border-gray-600"></div></div>
+                        <div class="relative flex justify-center text-sm"><span class="px-2 bg-white dark:bg-dark-card text-gray-500">OU</span></div>
+                    </div>
+                    
+                    <input type="url" id="editor-image-url" placeholder="Cole a URL da imagem aqui..." class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                </div>
+            </div>
+
+            <!-- Tab Video -->
+            <div id="content-video" class="hidden">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Cole o link do YouTube, Vimeo ou Facebook:</p>
+                <input type="url" id="editor-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 mb-4">
+                <div class="bg-blue-50 text-blue-800 p-3 rounded text-sm">
+                    <i class="fas fa-lightbulb mr-1"></i> O vídeo será incorporado automaticamente no texto.
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeMediaModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded">Cancelar</button>
+                <button onclick="confirmInsertMedia()" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-bold">Inserir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Delete -->
+    <div id="delete-confirm-modal" class="modal-overlay hidden">
+        <div class="bg-white dark:bg-dark-card rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
+            <i class="fas fa-trash-alt fa-3x text-red-500 mb-4"></i>
+            <h3 class="text-xl font-bold mb-2">Excluir Notícia?</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-6 text-sm">Essa ação não pode ser desfeita.</p>
+            <div class="flex justify-center gap-3">
+                <button id="cancel-delete-btn" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">Cancelar</button>
+                <button id="confirm-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Excluir</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
 
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -195,26 +354,77 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- Configuração Avançada do Quill ---
         const Font = Quill.import('formats/font');
         Font.whitelist = ['sans-serif', 'serif', 'monospace', 'roboto-slab', 'lora', 'montserrat'];
         Quill.register(Font, true);
-
-        const quillToolbarOptions = [
-            [{ 'font': Font.whitelist }],
-            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-            [{ 'size': ['small', false, 'large', 'huge'] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'script': 'sub'}, { 'script': 'super' }],
-            ['blockquote', 'code-block'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],
-            [{ 'align': [] }],
-            ['link', 'image', 'video'],
-            ['clean']
-        ];
-        const quill = new Quill('#editor', { theme: 'snow', placeholder: 'Escreva o conteúdo...', modules: { toolbar: quillToolbarOptions } });
         
+        const quill = new Quill('#editor', { 
+            theme: 'snow', 
+            placeholder: 'Escreva sua notícia aqui...', 
+            modules: { 
+                toolbar: {
+                    container: [
+                        [{ 'font': Font.whitelist }, { 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'align': [] }],
+                        ['link', 'clean']
+                    ]
+                },
+                imageResize: { displaySize: true }
+            } 
+        });
+
+        // --- COMPRESSÃO AUTOMÁTICA (Conteúdo e Colagem) ---
+        // Função para comprimir qualquer imagem para ficar < 200KB se possível
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Limita largura máxima para 800px no texto
+                    const MAX_WIDTH = 800;
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Tenta qualidade 0.7
+                    let dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    callback(dataUrl);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Intercepta Colagem
+        quill.root.addEventListener('paste', (e) => {
+            const clipboardData = e.clipboardData || window.clipboardData;
+            if (clipboardData && clipboardData.files && clipboardData.files.length > 0) {
+                e.preventDefault();
+                const file = clipboardData.files[0];
+                if (file.type.startsWith('image/')) {
+                    compressImage(file, (dataUrl) => {
+                        const range = quill.getSelection(true) || { index: quill.getLength() };
+                        quill.insertEmbed(range.index, 'image', dataUrl);
+                    });
+                }
+            }
+        });
+
+        // --- Auth ---
         onAuthStateChanged(auth, user => {
             if (user) {
                 document.getElementById('admin-panel').classList.remove('hidden');
@@ -226,316 +436,374 @@
                 document.getElementById('login-section').classList.remove('hidden');
             }
         });
-        
+
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const loginButton = document.getElementById('login-button');
-            const buttonText = document.getElementById('login-button-text');
-            const spinner = document.getElementById('login-spinner');
-            const loginError = document.getElementById('login-error');
-
-            loginButton.disabled = true;
-            buttonText.textContent = 'Entrando...';
-            spinner.classList.remove('hidden');
-            loginError.textContent = '';
-
-            signInWithEmailAndPassword(auth, email, password)
-                .catch(error => { 
-                    console.error("Erro de login:", error.code, error.message);
-                    if (error.code === 'auth/invalid-api-key' || error.code === 'auth/api-key-not-valid.-please-pass-a-valid-api-key.') {
-                        loginError.textContent = "Erro de configuração: A chave de API do Firebase é inválida.";
-                    } else {
-                        loginError.textContent = "Email ou senha inválidos."; 
-                    }
-                })
-                .finally(() => {
-                    loginButton.disabled = false;
-                    buttonText.textContent = 'Entrar';
-                    spinner.classList.add('hidden');
-                });
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .catch(err => document.getElementById('login-error').textContent = err.message);
         });
-        
         document.getElementById('logout-button').addEventListener('click', () => signOut(auth));
 
-        let categoriesChart = null;
+        // --- Stats ---
         async function loadDashboardStats() {
             try {
                 const querySnapshot = await getDocs(collection(db, "news"));
                 let totalNews = 0;
-                let totalDrafts = 0;
                 const categories = {};
                 querySnapshot.forEach(doc => {
                     const news = doc.data();
                     if (news.status === 'published') {
                         totalNews++;
                         if (news.category) categories[news.category] = (categories[news.category] || 0) + 1;
-                    } else {
-                        totalDrafts++;
                     }
                 });
                 document.getElementById('stats-total-news').textContent = totalNews;
-                document.getElementById('stats-total-drafts').textContent = totalDrafts;
-                
                 const ctx = document.getElementById('categories-chart').getContext('2d');
-                if (categoriesChart) categoriesChart.destroy();
-                categoriesChart = new Chart(ctx, {
-                    type: 'bar',
+                if (window.myChart) window.myChart.destroy();
+                window.myChart = new Chart(ctx, {
+                    type: 'doughnut',
                     data: {
                         labels: Object.keys(categories),
-                        datasets: [{
-                            label: 'Notícias Publicadas',
-                            data: Object.values(categories),
-                            backgroundColor: document.documentElement.classList.contains('dark') ? '#1565C0' : '#0D47A1',
-                        }]
+                        datasets: [{ data: Object.values(categories), backgroundColor: ['#0D47A1', '#4299E1', '#90CDF4', '#2B6CB0'] }]
                     },
-                    options: { 
-                        scales: { 
-                            y: { 
-                                beginAtZero: true,
-                                ticks: { color: document.documentElement.classList.contains('dark') ? '#A0AEC0' : '#4A5568' }
-                            },
-                            x: {
-                                ticks: { color: document.documentElement.classList.contains('dark') ? '#A0AEC0' : '#4A5568' }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: document.documentElement.classList.contains('dark') ? '#A0AEC0' : '#4A5568'
-                                }
-                            }
-                        }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false }
                 });
-            } catch (error) {
-                console.error("Erro ao carregar estatísticas do dashboard:", error);
-                showToast('Não foi possível carregar os dados do dashboard.', 'error');
+            } catch(e) {}
+        }
+
+        // ==========================================================
+        //  LÓGICA DE CAPA (CROPPER)
+        // ==========================================================
+        let cropper;
+        let originalFile = null;
+        const imagePreview = document.getElementById('image-preview');
+        const base64Input = document.getElementById('base64-image');
+        const cropModal = document.getElementById('crop-modal');
+        const imageToCrop = document.getElementById('image-to-crop');
+        const reCropBtn = document.getElementById('re-crop-btn');
+
+        document.getElementById('imageInput').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                originalFile = e.target.files[0];
+                openCropModal(originalFile);
+            }
+        });
+
+        window.promptUrlImage = () => {
+            const url = prompt("Cole a URL da imagem de capa:");
+            if(url) openCropModal(url);
+        }
+
+        function openCropModal(src) {
+            if (src instanceof File) {
+                const reader = new FileReader();
+                reader.onload = (e) => startCropper(e.target.result);
+                reader.readAsDataURL(src);
+            } else {
+                startCropper(src);
             }
         }
-        
-        async function handleFormSubmit(status) {
-            const saveButton = document.getElementById('save-button');
-            saveButton.disabled = true;
 
-            const finalImageUrl = document.getElementById('imageUrl').value.trim();
-            if (!finalImageUrl) {
-                showToast('Por favor, adicione a URL da imagem principal.', 'error');
-                saveButton.disabled = false;
-                return;
+        function startCropper(src) {
+            imageToCrop.src = src;
+            imageToCrop.crossOrigin = "anonymous";
+            cropModal.classList.remove('hidden');
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(imageToCrop, { aspectRatio: 16/9, viewMode: 1, autoCropArea: 1 });
+        }
+
+        window.closeCropModal = () => { cropModal.classList.add('hidden'); if(cropper) cropper.destroy(); document.getElementById('imageInput').value = ''; };
+
+        // Função de confirmação do Crop que retorna uma Promise
+        function getCroppedImage() {
+            return new Promise((resolve) => {
+                if (!cropper) return resolve(null);
+                
+                // Reduz resolução inicial
+                const canvas = cropper.getCroppedCanvas({ width: 1024, height: 576, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' });
+                
+                let quality = 0.8;
+                let dataUrl = canvas.toDataURL('image/jpeg', quality);
+                
+                // Tenta chegar a ~300KB para a capa
+                while (dataUrl.length > 400000 && quality > 0.1) {
+                    quality -= 0.1;
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                }
+                resolve(dataUrl);
+            });
+        }
+
+        window.confirmCrop = async () => {
+            const dataUrl = await getCroppedImage();
+            if (dataUrl) {
+                imagePreview.src = dataUrl;
+                imagePreview.classList.remove('hidden');
+                document.getElementById('placeholder-text').classList.add('hidden');
+                base64Input.value = dataUrl;
+                reCropBtn.classList.remove('hidden');
+                closeCropModal();
             }
+        };
 
-            const tagsArray = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
-            const newsData = {
-                title: document.getElementById('title').value.trim(),
-                subtitle: document.getElementById('subtitle').value.trim(),
-                category: document.getElementById('category').value.trim(),
-                tags: tagsArray,
-                imageUrl: finalImageUrl,
-                imageCredit: document.getElementById('imageCredit').value.trim(),
-                content: quill.root.innerHTML,
-                status: status,
-                updatedAt: serverTimestamp(),
-            };
-            const id = document.getElementById('news-id').value;
+        window.reCropImage = () => {
+            if (originalFile) openCropModal(originalFile);
+            else if (base64Input.value) openCropModal(base64Input.value);
+        }
+
+        // ==========================================================
+        //  LÓGICA DE MÍDIA NO EDITOR
+        // ==========================================================
+        const mediaModal = document.getElementById('media-modal');
+        let activeMediaTab = 'image';
+
+        window.insertMediaModal = () => {
+            mediaModal.classList.remove('hidden');
+            switchMediaTab('image');
+        };
+
+        window.closeMediaModal = () => {
+            mediaModal.classList.add('hidden');
+            document.getElementById('editor-image-url').value = '';
+            document.getElementById('editor-video-url').value = '';
+            document.getElementById('editor-image-input').value = '';
+        };
+
+        window.switchMediaTab = (tab) => {
+            activeMediaTab = tab;
+            document.getElementById('tab-image').className = tab === 'image' ? 'pb-2 border-b-2 border-primary text-primary font-bold' : 'pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700';
+            document.getElementById('tab-video').className = tab === 'video' ? 'pb-2 border-b-2 border-primary text-primary font-bold' : 'pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700';
+            document.getElementById('content-image').classList.toggle('hidden', tab !== 'image');
+            document.getElementById('content-video').classList.toggle('hidden', tab !== 'video');
+        };
+
+        window.handleEditorImageUpload = (input) => {
+            if (input.files && input.files[0]) {
+                compressImage(input.files[0], (dataUrl) => {
+                    const range = quill.getSelection(true) || { index: quill.getLength() };
+                    quill.insertEmbed(range.index, 'image', dataUrl);
+                    closeMediaModal();
+                });
+            }
+        };
+
+        window.confirmInsertMedia = () => {
+            const range = quill.getSelection(true) || { index: quill.getLength() };
+            
+            if (activeMediaTab === 'image') {
+                const url = document.getElementById('editor-image-url').value;
+                if (url) {
+                    quill.insertEmbed(range.index, 'image', url);
+                    closeMediaModal();
+                }
+            } else {
+                const url = document.getElementById('editor-video-url').value;
+                if (url) {
+                    let embedUrl = url;
+                    if (url.includes('youtube.com/watch?v=')) embedUrl = `https://www.youtube.com/embed/${url.split('v=')[1].split('&')[0]}`;
+                    else if (url.includes('youtu.be/')) embedUrl = `https://www.youtube.com/embed/${url.split('youtu.be/')[1]}`;
+                    else if (url.includes('vimeo.com/')) embedUrl = `https://player.vimeo.com/video/${url.split('vimeo.com/')[1]}`;
+                    
+                    quill.insertEmbed(range.index, 'video', embedUrl);
+                    closeMediaModal();
+                }
+            }
+        };
+
+        window.toggleFullscreen = () => document.getElementById('editor-wrapper').classList.toggle('fullscreen');
+        window.updateCharCount = (input, spanId, max) => {
+            const count = input.value.length;
+            const span = document.getElementById(spanId);
+            span.textContent = count;
+            if (max && count >= max) span.classList.add('text-red-500'); else span.classList.remove('text-red-500');
+        };
+
+        // ==========================================================
+        //  SALVAR COM VERIFICAÇÃO DE TAMANHO
+        // ==========================================================
+        async function handleFormSubmit(status) {
+            const btn = document.getElementById('save-button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando...`;
+
             try {
-                if (id) {
-                    await updateDoc(doc(db, "news", id), newsData);
-                    showToast('Notícia atualizada com sucesso!');
-                } else {
+                let imageUrl = base64Input.value;
+                const contentHtml = quill.root.innerHTML;
+                
+                // 1. Verificação de Tamanho Total (Firestore Limit 1MB)
+                // String length ~= bytes. Safe margin: 950,000 bytes.
+                let totalSize = (imageUrl ? imageUrl.length : 0) + contentHtml.length + 5000; // +5KB overhead
+                
+                console.log("Tamanho estimado:", totalSize);
+
+                if (totalSize > 980000) {
+                    // SE ESTIVER GRANDE DEMAIS:
+                    // Tenta comprimir a capa agressivamente primeiro
+                    if (imageUrl && imageUrl.length > 200000) {
+                        btn.innerHTML = `<i class="fas fa-compress"></i> Comprimindo Capa...`;
+                        
+                        // Recria o canvas da capa para comprimir MUITO
+                        const tempImg = new Image();
+                        tempImg.src = imageUrl;
+                        await new Promise(r => tempImg.onload = r);
+                        
+                        const canvas = document.createElement('canvas');
+                        // Reduz resolução drasticamente se necessário
+                        const scale = 0.7; 
+                        canvas.width = tempImg.width * scale;
+                        canvas.height = tempImg.height * scale;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+                        
+                        imageUrl = canvas.toDataURL('image/jpeg', 0.5); // Qualidade 50%
+                        base64Input.value = imageUrl;
+                        
+                        // Recalcula
+                        totalSize = imageUrl.length + contentHtml.length + 5000;
+                    }
+                    
+                    // Se AINDA estiver grande, é culpa do CONTEÚDO (imagens coladas no texto)
+                    if (totalSize > 980000) {
+                        throw new Error(`O conteúdo da notícia está muito pesado (${(totalSize/1024/1024).toFixed(2)}MB). O limite é 1MB. Tente remover algumas imagens do texto.`);
+                    }
+                }
+
+                if (!imageUrl && status === 'published') throw new Error('Capa obrigatória para publicar.');
+
+                const newsData = {
+                    title: document.getElementById('title').value.trim(),
+                    subtitle: document.getElementById('subtitle').value.trim(),
+                    category: document.getElementById('category').value.trim(),
+                    tags: document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(t=>t),
+                    imageUrl: imageUrl,
+                    imageCredit: document.getElementById('imageCredit').value.trim(),
+                    content: contentHtml,
+                    status: status,
+                    updatedAt: serverTimestamp(),
+                };
+
+                const id = document.getElementById('news-id').value;
+                if (id) await updateDoc(doc(db, "news", id), newsData);
+                else {
                     newsData.createdAt = serverTimestamp();
                     await addDoc(collection(db, "news"), newsData);
-                    showToast('Notícia salva com sucesso!');
                 }
+                
+                showToast(`Notícia ${id ? 'atualizada' : 'criada'} com sucesso!`);
                 hideForm();
                 loadDashboardStats();
+
             } catch (error) {
-                console.error("Erro ao salvar notícia: ", error);
-                showToast('Ocorreu um erro ao salvar.', 'error');
+                console.error(error);
+                showToast(error.message, 'error');
             } finally {
-                saveButton.disabled = false;
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         }
 
         document.getElementById('save-button').addEventListener('click', () => handleFormSubmit('published'));
         document.getElementById('draft-button').addEventListener('click', () => handleFormSubmit('draft'));
 
-        document.getElementById('preview-button').addEventListener('click', () => {
-            const tagsArray = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
-            const previewData = {
-                title: document.getElementById('title').value,
-                subtitle: document.getElementById('subtitle').value,
-                category: document.getElementById('category').value,
-                tags: tagsArray,
-                imageUrl: document.getElementById('imageUrl').value,
-                imageCredit: document.getElementById('imageCredit').value,
-                content: quill.root.innerHTML,
-                createdAt: new Date().toISOString()
-            };
-            sessionStorage.setItem('newsPreview', JSON.stringify(previewData));
-            window.open('noticia.html?preview=true', '_blank');
-        });
-
+        // --- Listagem & CRUD ---
         const newsList = document.getElementById('news-list');
         function listenForNewsChanges() {
-            const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
+             const q = query(collection(db, "news"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 newsList.innerHTML = '';
-                if (snapshot.empty) {
-                    newsList.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">Nenhuma notícia encontrada.</p>`;
-                }
+                if (snapshot.empty) newsList.innerHTML = `<p class="text-center text-gray-500 py-4">Nenhuma notícia encontrada.</p>`;
                 snapshot.forEach(doc => {
-                    const newsItem = createNewsItemElement(doc.id, doc.data());
-                    newsList.appendChild(newsItem);
+                    const n = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-4 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 mb-2';
+                    div.innerHTML = `
+                        <div>
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200">${n.title}</h3>
+                            <span class="text-xs ${n.status==='draft'?'text-yellow-600':'text-green-600'} font-bold uppercase">${n.status==='draft'?'Rascunho':'Publicado'}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="edit-btn text-blue-500 p-2 hover:bg-blue-100 rounded" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn text-red-500 p-2 hover:bg-red-100 rounded" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    newsList.appendChild(div);
                 });
-            }, (error) => {
-                console.error("Erro ao buscar notícias: ", error);
-                showToast('Erro ao carregar a lista de notícias.', 'error');
             });
         }
 
-        function createNewsItemElement(id, news) {
-            const date = news.createdAt?.toDate().toLocaleString('pt-BR') || 'Data indisponível';
-            const newsItem = document.createElement('div');
-            newsItem.id = `news-item-${id}`;
-            newsItem.className = 'flex flex-col sm:flex-row justify-between sm:items-start p-4 border dark:border-gray-700 rounded-lg gap-4';
-            const statusBadge = news.status === 'draft' 
-                ? `<span class="bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full">Rascunho</span>` 
-                : `<span class="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">Publicado</span>`;
-
-            newsItem.innerHTML = `
-                <div class="flex-grow">
-                    <h3 class="font-bold break-words">${news.title}</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">${news.category}</p>
-                    <div class="flex items-center gap-2 mt-1 flex-wrap">
-                        ${statusBadge}
-                        <p class="text-xs text-gray-400 dark:text-gray-500">${date}</p>
-                    </div>
-                </div>
-                <div class="flex gap-2 flex-shrink-0 self-end sm:self-auto">
-                    <button class="edit-btn text-blue-500 hover:text-blue-700 p-2" data-id="${id}" title="Editar"><i class="fas fa-edit"></i></button>
-                    <button class="delete-btn text-red-500 hover:text-red-700 p-2" data-id="${id}" title="Apagar"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
-            return newsItem;
-        }
-        
         newsList.addEventListener('click', async (e) => {
-            const button = e.target.closest('button');
-            if (!button) return;
-            const id = button.dataset.id;
-            if (button.classList.contains('delete-btn')) {
-                document.getElementById('delete-confirm-modal').classList.remove('hidden');
+            const btn = e.target.closest('button');
+            if(!btn) return;
+            const id = btn.dataset.id;
+            
+            if(btn.classList.contains('delete-btn')) {
+                const modal = document.getElementById('delete-confirm-modal');
+                modal.classList.remove('hidden');
                 document.getElementById('confirm-delete-btn').onclick = async () => {
-                    try {
-                        await deleteDoc(doc(db, "news", id));
-                        showToast('Notícia apagada com sucesso.');
-                        loadDashboardStats();
-                    } catch (error) {
-                        showToast('Erro ao apagar notícia.', 'error');
-                    } finally {
-                        document.getElementById('delete-confirm-modal').classList.add('hidden');
-                    }
+                    await deleteDoc(doc(db, "news", id));
+                    modal.classList.add('hidden');
+                    showToast('Notícia excluída.');
                 };
-            } else if (button.classList.contains('edit-btn')) {
-                try {
-                    const docSnap = await getDoc(doc(db, "news", id));
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        document.getElementById('news-id').value = docSnap.id;
-                        document.getElementById('title').value = data.title || '';
-                        document.getElementById('subtitle').value = data.subtitle || '';
-                        document.getElementById('category').value = data.category || '';
-                        document.getElementById('tags').value = (data.tags || []).join(', ');
-                        document.getElementById('imageUrl').value = data.imageUrl || '';
-                        document.getElementById('imageCredit').value = data.imageCredit || '';
-                        quill.root.innerHTML = data.content || '';
-                        updateImagePreview();
-                        document.getElementById('form-title').textContent = "Editar Notícia";
-                        showForm();
-                    }
-                } catch (error) {
-                    showToast('Erro ao carregar dados para edição.', 'error');
+                document.getElementById('cancel-delete-btn').onclick = () => modal.classList.add('hidden');
+            } else if(btn.classList.contains('edit-btn')) {
+                const docSnap = await getDoc(doc(db, "news", id));
+                if(docSnap.exists()) {
+                    const d = docSnap.data();
+                    document.getElementById('news-id').value = id;
+                    document.getElementById('title').value = d.title;
+                    document.getElementById('subtitle').value = d.subtitle || '';
+                    document.getElementById('category').value = d.category;
+                    document.getElementById('tags').value = (d.tags||[]).join(', ');
+                    document.getElementById('imageCredit').value = d.imageCredit || '';
+                    quill.root.innerHTML = d.content;
+                    
+                    if(d.imageUrl) {
+                        base64Input.value = d.imageUrl;
+                        imagePreview.src = d.imageUrl;
+                        imagePreview.classList.remove('hidden');
+                        document.getElementById('placeholder-text').classList.add('hidden');
+                        reCropBtn.classList.remove('hidden');
+                    } else resetImage();
+                    
+                    showForm();
+                    updateCharCount(document.getElementById('title'), 'title-count');
+                    updateCharCount(document.getElementById('subtitle'), 'subtitle-count', 160);
                 }
             }
         });
 
-        const imageUrlInput = document.getElementById('imageUrl');
-        const imagePreview = document.getElementById('image-preview');
-        function updateImagePreview() {
-            const url = imageUrlInput.value.trim();
-            if (url) {
-                imagePreview.src = url;
-                imagePreview.classList.remove('hidden');
-            } else {
-                imagePreview.classList.add('hidden');
-            }
-        }
-        imageUrlInput.addEventListener('input', updateImagePreview);
-        imagePreview.onerror = () => { 
-            imagePreview.classList.add('hidden'); 
-            showToast('URL da imagem parece inválida.', 'error');
-        };
-
+        // UI Helpers
         const formContainer = document.getElementById('form-container');
-        const showForm = () => { formContainer.classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-        const hideForm = () => { formContainer.classList.add('hidden'); resetForm(); };
+        window.showForm = () => { formContainer.classList.remove('hidden'); window.scrollTo(0,0); };
+        window.hideForm = () => { formContainer.classList.add('hidden'); resetForm(); };
+        const resetImage = () => {
+            document.getElementById('imageInput').value = '';
+            base64Input.value = '';
+            imagePreview.classList.add('hidden');
+            document.getElementById('placeholder-text').classList.remove('hidden');
+            reCropBtn.classList.add('hidden');
+        };
         const resetForm = () => {
             document.getElementById('news-form').reset();
             quill.setText('');
             document.getElementById('news-id').value = '';
-            updateImagePreview();
-            document.getElementById('form-title').textContent = "Adicionar Nova Notícia";
+            resetImage();
         };
+
         document.getElementById('add-news-button').addEventListener('click', () => { resetForm(); showForm(); });
         document.getElementById('cancel-button').addEventListener('click', hideForm);
-        document.getElementById('cancel-delete-btn').addEventListener('click', () => document.getElementById('delete-confirm-modal').classList.add('hidden'));
-        
-        function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            toast.className = `flex items-center gap-3 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white p-4 rounded-lg shadow-lg toast`;
-            toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
-            toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
-        }
 
-        function formatVideoUrl(url) {
-            let videoId;
-            if (url.includes('youtube.com/watch?v=')) {
-                videoId = url.split('v=')[1].split('&')[0];
-                return `https://www.youtube.com/embed/${videoId}`;
-            }
-            if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-                return `https://www.youtube.com/embed/${videoId}`;
-            }
-            if (url.includes('youtube.com/shorts/')) {
-                videoId = url.split('shorts/')[1].split('?')[0];
-                return `https://www.youtube.com/embed/${videoId}`;
-            }
-            if (url.includes('player.vimeo.com') || url.includes('facebook.com/plugins/video.php')) {
-                return url;
-            }
-            return null;
+        function showToast(msg, type='success') {
+            const c = document.getElementById('toast-container');
+            const d = document.createElement('div');
+            d.className = `p-4 rounded shadow-lg text-white flex items-center gap-2 ${type==='success'?'bg-green-600':'bg-red-600'} transform transition-all translate-x-full`;
+            d.innerHTML = `<span>${msg}</span>`;
+            c.appendChild(d);
+            requestAnimationFrame(()=>d.classList.remove('translate-x-full'));
+            setTimeout(()=>d.remove(), 3000);
         }
-
-        quill.getModule('toolbar').addHandler('video', () => {
-            let url = prompt("Insira a URL do vídeo (YouTube, Vimeo, Facebook):");
-            if (url) {
-                const formattedUrl = formatVideoUrl(url);
-                if (formattedUrl) {
-                    const range = quill.getSelection(true);
-                    quill.insertEmbed(range.index, 'video', formattedUrl, Quill.sources.USER);
-                } else {
-                    showToast('URL de vídeo inválida ou não suportada.', 'error');
-                }
-            }
-        });
     </script>
-    
     <script src="scripts/main.js"></script>
 </body>
 </html>
